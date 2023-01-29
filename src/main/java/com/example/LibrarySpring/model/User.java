@@ -27,16 +27,14 @@ public class User {
 
     private String email;
     private String phone;
-    private boolean active;
 
-    public User(String username, String password, Status status, Role role, String email, String phone, boolean active) {
+    public User(String username, String password, Status status, Role role, String email, String phone) {
         this.username = username;
         this.password = password;
         this.status = status;
         this.role = role;
         this.email = email;
         this.phone = phone;
-        this.active = active;
     }
 
     public User(UserDTO userDTO) {
@@ -46,6 +44,5 @@ public class User {
         this.email = userDTO.getEmail();
         this.role = Role.USER_ROLE;
         this.status = Status.ACTIVE;
-        active = true;
     }
 }

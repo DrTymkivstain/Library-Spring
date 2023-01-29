@@ -35,8 +35,7 @@ public class Book {
     joinColumns = @JoinColumn(name = "book_id"),
     inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private Set<Tag> tags;
-    @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
-    @CollectionTable(name = "book_status", joinColumns = @JoinColumn(name = "book_id"))
+
     private BookAvailabilityStatus status;
 
 }

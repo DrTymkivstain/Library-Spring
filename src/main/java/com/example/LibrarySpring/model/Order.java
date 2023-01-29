@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity(name = "order")
+@Entity(name = "orders")
 public class Order {
     private static final Integer PERIOD_OF_USE_IN_MONTHS = 1;
 
