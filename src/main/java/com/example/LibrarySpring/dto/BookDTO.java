@@ -1,7 +1,7 @@
 package com.example.LibrarySpring.dto;
 
-import com.example.LibrarySpring.entity.Author;
-import com.example.LibrarySpring.entity.Tag;
+import com.example.LibrarySpring.model.Author;
+import com.example.LibrarySpring.model.Tag;
 import lombok.*;
 
 @Data

@@ -1,4 +1,4 @@
-package com.example.LibrarySpring.entity;
+package com.example.LibrarySpring.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;

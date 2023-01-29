@@ -1,4 +1,4 @@
-package com.example.LibrarySpring.entity;
+package com.example.LibrarySpring.model;
 
 public enum Status {
     ACTIVE,
