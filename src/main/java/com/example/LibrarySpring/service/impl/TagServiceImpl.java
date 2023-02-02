@@ -6,6 +6,7 @@ import com.example.LibrarySpring.service.TagService;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -21,5 +22,12 @@ public class TagServiceImpl implements TagService {
     public Set<Tag> mapTagArrayIntoTagSet(Tag[] tags) {
         return Arrays.stream(tags)
                 .collect(Collectors.toSet());
+    }
+
+    @Override
+    public List<String> getAllTags() {
+        return tagRepository.findAll()
+                .stream().map(tag -> tag.toString())
+                .collect(Collectors.toList());
     }
 }

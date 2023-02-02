@@ -1,10 +1,9 @@
 package com.example.LibrarySpring.service.impl;
 
 import com.example.LibrarySpring.dto.BookDTO;
+import com.example.LibrarySpring.dto.FilterDTO;
 import com.example.LibrarySpring.exception.CustomException;
-import com.example.LibrarySpring.model.Book;
-import com.example.LibrarySpring.model.BookAvailabilityStatus;
-import com.example.LibrarySpring.model.Shelf;
+import com.example.LibrarySpring.model.*;
 import com.example.LibrarySpring.repository.BookRepository;
 import com.example.LibrarySpring.repository.ShelfRepository;
 import com.example.LibrarySpring.repository.TagRepository;
@@ -14,7 +13,11 @@ import com.example.LibrarySpring.service.TagService;
 import com.example.LibrarySpring.util.Validator;
 import jakarta.transaction.Transactional;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Log4j2
@@ -81,5 +84,47 @@ public class BookServiceImpl implements BookService {
     public void deleteBook(BookDTO bookDTO) {
         log.info("delete book with id {}", bookDTO.getId());
         bookRepository.deleteById(bookDTO.getId());
+    }
+
+    @Override
+    public List<BookDTO> getAvailableBooks(Pageable pageable) {
+        return bookRepository.findAllByStatus(BookAvailabilityStatus.AVAILABLE, pageable)
+                .stream()
+                .map(this::buildBookDTO)
+                .collect(Collectors.toList());
+    }
+
+    private BookDTO buildBookDTO(Book book) {
+        return BookDTO.builder()
+                .id(book.getId())
+                .authors(getArrayOfAuthors(book))
+                .tags(getArrayOfTags(book))
+                .name(book.getName())
+                .build();
+    }
+
+
+    private Tag[] getArrayOfTags(Book book) {
+        return  book.getTags().toArray(new Tag[book.getTags().size()]);
+    }
+
+    private Author[] getArrayOfAuthors(Book book) {
+        return book.getAuthors().toArray(new Author[book.getAuthors().size()]);
+    }
+
+    @Override
+    public List<BookDTO> getAvailableBookDTOsByFilter(FilterDTO filterDTO, Pageable pageable) {
+        return getAvailableBooksByFilter(filterDTO, pageable)
+                .stream()
+                .map(this::buildBookDTO)
+                .collect(Collectors.toList());
+
+    }
+
+    private List<Book> getAvailableBooksByFilter(FilterDTO filterDTO, Pageable pageable) {
+        return bookRepository.getAvailableBooksByFilter(
+                        filterDTO.getName(),
+                        filterDTO.getAuthors(),
+                        filterDTO.getTags(), pageable);
     }
 }

@@ -29,6 +29,6 @@ public class Order {
 
     private boolean active;
     private LocalDate startDate = LocalDate.now();
-    private LocalDate endDate = startDate.plusMonths(PERIOD_OF_USE_IN_MONTHS);
+    private LocalDate endDate = LocalDate.now().plusMonths(PERIOD_OF_USE_IN_MONTHS);
 
 }
