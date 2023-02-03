@@ -9,6 +9,7 @@ import com.example.LibrarySpring.util.Validator;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,6 +28,7 @@ public class ProspectusController {
     }
 
     @GetMapping(value = "/books/{page}/{number}")
+    @PreAuthorize("hasAuthority('developers:read')")
     public List<BookDTO> getAvailableBooks(@PathVariable("page") String page, @PathVariable("number") String number) {
         Pageable pageable = PageRequest.of(Integer.parseInt(page), Integer.parseInt(number));
         log.info("get books by pageable {}", pageable);
@@ -34,19 +36,21 @@ public class ProspectusController {
     }
 
     @GetMapping(value = "/tags")
+    @PreAuthorize("hasAuthority('developers:read')")
     public List<String> getAllTags() {
         return tagService.getAllTags();
     }
 
     @GetMapping(value = "/authors")
-    public @ResponseBody List<String> getAllAuthors() {
+    @PreAuthorize("hasAuthority('developers:read')")
+    public List<String> getAllAuthors() {
         return authorService.getAllAuthors();
     }
 
 
     @PostMapping("/filter/{page}/{number}")
-    public @ResponseBody
-    List<BookDTO> getBooksByFilter(@PathVariable("page") String page,
+    @PreAuthorize("hasAuthority('developers:read')")
+    public List<BookDTO> getBooksByFilter(@PathVariable("page") String page,
                                    @PathVariable("number") String number,
                                    @RequestBody FilterDTO filterDTO) {
         Pageable pageable = PageRequest.of(Integer.parseInt(page), Integer.parseInt(number));
