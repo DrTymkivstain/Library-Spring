@@ -27,36 +27,43 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void registerUser(UserDTO userDTO) {
+    public UserDTO registerUser(UserDTO userDTO) {
         User user = new User(userDTO);
+        userRepository.save(user);
+        return userDTO;
     }
 
     @Override
-    public void updateUser(UserDTO userDTO) {
+    public UserDTO updateUser(UserDTO userDTO) {
         log.info("update user with id {}", userDTO.getId());
         userRepository.save(getUpdatedUser(userDTO));
+        return userDTO;
     }
 
     @Override
-    public void deleteUser(UserDTO userDTO) {
+    public UserDTO deleteUser(UserDTO userDTO) {
         log.info("delete user with id {}", userDTO.getId());
         userRepository.deleteById(userDTO.getId());
+        return userDTO;
+
     }
 
     @Override
-    public void banUser(UserDTO userDTO) {
+    public UserDTO banUser(UserDTO userDTO) {
         log.info("ban user with id {}", userDTO);
         userRepository.findByUsername(userDTO.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("not found user with username {}" + userDTO.getUsername()))
                 .setStatus(Status.BANNED);
+        return userDTO;
     }
 
     @Override
-    public void unBanUser(UserDTO userDTO) {
+    public UserDTO unBanUser(UserDTO userDTO) {
         log.info("unban user with id {}", userDTO);
         userRepository.findByUsername(userDTO.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("not found user with username {}" + userDTO.getUsername()))
                 .setStatus(Status.ACTIVE);
+        return userDTO;
     }
 
     @Override

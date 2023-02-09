@@ -35,7 +35,7 @@ public class Book {
     joinColumns = @JoinColumn(name = "book_id"),
     inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private Set<Tag> tags;
-
+    @Column(name = "status")
     private BookAvailabilityStatus status;
 
 }
