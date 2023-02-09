@@ -18,46 +18,42 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
 
-    public UserController(@Qualifier(value = "UserServiceImpl") UserService userService) {
+    public UserController( UserService userService) {
         this.userService = userService;
     }
     @PostMapping("/reg")
     @ResponseStatus(HttpStatus.CREATED)
     public UserDTO createUser(UserDTO userDTO) {
         log.info("create user {}", userDTO);
-        userService.registerUser(userDTO);
-        return userDTO;
+        return userService.registerUser(userDTO);
     }
 
     @PutMapping("/update")
     @PreAuthorize("hasAuthority('developers:read')")
     public UserDTO updateUser(UserDTO userDTO) {
         log.info("update user {}", userDTO);
-        userService.updateUser(userDTO);
-        return  userDTO;
+        return userService.updateUser(userDTO);
+
     }
 
     @DeleteMapping("delete")
     @PreAuthorize("hasAuthority('developers:read')")
     public UserDTO deleteUser(UserDTO userDTO) {
         log.info("delete user {}", userDTO);
-        userService.deleteUser(userDTO);
-        return  userDTO;
+        return userService.deleteUser(userDTO);
     }
     @PostMapping("/ban")
     @PreAuthorize("hasAuthority('developers:write')")
     public UserDTO banUser(UserDTO userDTO) {
         log.info("ban user {}", userDTO);
-        userService.banUser(userDTO);
-        return userDTO;
+        return userService.banUser(userDTO);
     }
 
     @PostMapping("/unban")
     @PreAuthorize("hasAuthority('developers:write')")
     public UserDTO unBanUser(UserDTO userDTO) {
         log.info("unban user {}", userDTO);
-        userService.unBanUser(userDTO);
-        return userDTO;
+        return userService.unBanUser(userDTO);
     }
 
     @GetMapping("/users")

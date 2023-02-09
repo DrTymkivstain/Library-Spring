@@ -6,15 +6,15 @@ import com.example.LibrarySpring.model.User;
 import java.util.List;
 
 public interface UserService {
-    void registerUser(UserDTO userDTO);
+    UserDTO registerUser(UserDTO userDTO);
 
-    void updateUser(UserDTO userDTO);
+    UserDTO updateUser(UserDTO userDTO);
 
-    void deleteUser(UserDTO userDTO);
+    UserDTO deleteUser(UserDTO userDTO);
 
-    void banUser(UserDTO userDTO);
+    UserDTO banUser(UserDTO userDTO);
 
-    void unBanUser(UserDTO userDTO);
+    UserDTO unBanUser(UserDTO userDTO);
 
     List<User> getAllUsers();
 

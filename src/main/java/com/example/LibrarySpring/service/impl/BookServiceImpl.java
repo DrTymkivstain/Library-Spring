@@ -16,6 +16,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -59,6 +60,7 @@ public class BookServiceImpl implements BookService {
     private Book buildBookFromBookDTO(BookDTO bookDTO) {
 
         return Book.builder()
+                .id(bookDTO.getId())
                 .name(bookDTO.getName())
                 .tags(tagService.mapTagArrayIntoTagSet(bookDTO.getTags()))
                 .authors(authorService.mapAuthorArrayIntoAuthorSet(bookDTO.getAuthors()))
@@ -124,7 +126,8 @@ public class BookServiceImpl implements BookService {
     private List<Book> getAvailableBooksByFilter(FilterDTO filterDTO, Pageable pageable) {
         return bookRepository.getAvailableBooksByFilter(
                         filterDTO.getName(),
-                        filterDTO.getAuthors(),
-                        filterDTO.getTags(), pageable);
+                filterDTO.getAuthors(),
+                filterDTO.getTags(),
+                pageable);
     }
 }
