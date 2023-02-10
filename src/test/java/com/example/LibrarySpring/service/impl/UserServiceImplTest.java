@@ -14,7 +14,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -46,6 +45,7 @@ class UserServiceImplTest {
         userDTO.setId(89L);
         User newUser = new User();
         when(userRepository.findById(user.getUserId())).thenReturn(Optional.of(user));
+        when(userRepository.save(user)).thenReturn(user);
         userService.updateUser(userDTO);
         verify(userRepository).findById(userDTO.getId());
     }
@@ -56,51 +56,59 @@ class UserServiceImplTest {
         userDTO.setId(8L);
         when(userRepository.findById(anyLong())).thenThrow(CustomException.class);
         CustomException thrown = assertThrows(CustomException.class, () -> userService.updateUser(userDTO));
-        assertTrue(Objects.equals(thrown.getClass(), CustomException.class));
+        assertEquals(thrown.getClass(), CustomException.class);
     }
+
     @Test
     void deleteUser() {
-            User user = new User();
-            UserDTO userDTO = new UserDTO();
-            userDTO.setId(1L);
-            user.setUserId(1L);
-            when(userRepository.findById(user.getUserId())).thenReturn(Optional.of(user));
-            userService.deleteUser(userDTO);
-            verify(userRepository).deleteById(userDTO.getId());
-        }
+        User user = new User();
+        UserDTO userDTO = new UserDTO();
+        userDTO.setId(1L);
+        user.setUserId(1L);
+        when(userRepository.findById(user.getUserId())).thenReturn(Optional.of(user));
+        userService.deleteUser(userDTO.getId());
+        verify(userRepository).deleteById(userDTO.getId());
+    }
+
     @Test
     void deleteUserIfNotExist() {
         UserDTO userDTO = new UserDTO();
         userDTO.setId(8L);
         when(userRepository.findById(anyLong())).thenThrow(CustomException.class);
         CustomException thrown = assertThrows(CustomException.class, () -> userService.updateUser(userDTO));
-        assertTrue(Objects.equals(thrown.getClass(), CustomException.class));
+        assertEquals(thrown.getClass(), CustomException.class);
     }
 
     @Test
     void banUser() {
         UserDTO userDTO = new UserDTO();
         userDTO.setUsername("user");
+        userDTO.setId(1L);
         User user = new User();
         user.setUsername("user");
         user.setStatus(Status.ACTIVE);
-        when(userRepository.findByUsername(userDTO.getUsername())).thenReturn(Optional.of(user));
-        userService.banUser(userDTO);
-        assertEquals(userRepository.findByUsername(user.getUsername()).get().getStatus(), Status.BANNED);
-        verify(userRepository, times(2)).findByUsername(user.getUsername());
+        user.setUserId(1L);
+        when(userRepository.findById(userDTO.getId())).thenReturn(Optional.of(user));
+        when(userRepository.save(user)).thenReturn(user);
+        userService.banUser(userDTO.getId());
+        assertEquals(userRepository.findById(user.getUserId()).get().getStatus(), Status.BANNED);
+        verify(userRepository, times(2)).findById(user.getUserId());
     }
 
     @Test
     void unBanUser() {
         UserDTO userDTO = new UserDTO();
         userDTO.setUsername("user");
+        userDTO.setId(1L);
         User user = new User();
         user.setUsername("user");
         user.setStatus(Status.BANNED);
-        when(userRepository.findByUsername(userDTO.getUsername())).thenReturn(Optional.of(user));
-        userService.unBanUser(userDTO);
-        assertEquals(userRepository.findByUsername(user.getUsername()).get().getStatus(), Status.ACTIVE);
-        verify(userRepository, times(2)).findByUsername(user.getUsername());
+        user.setUserId(1L);
+        when(userRepository.findById(userDTO.getId())).thenReturn(Optional.of(user));
+        when(userRepository.save(user)).thenReturn(user);
+        userService.unBanUser(userDTO.getId());
+        assertEquals(userRepository.findById(user.getUserId()).get().getStatus(), Status.ACTIVE);
+        verify(userRepository, times(2)).findById(user.getUserId());
     }
 
     @Test
@@ -125,7 +133,7 @@ class UserServiceImplTest {
         user.setUserId(1L);
         when(userRepository.findById(anyLong())).thenThrow(CustomException.class);
         CustomException thrown = assertThrows(CustomException.class, () -> userService.findUserById(user.getUserId()));
-        assertTrue(Objects.equals(thrown.getClass(), CustomException.class));
+        assertEquals(thrown.getClass(), CustomException.class);
     }
 
     @Test

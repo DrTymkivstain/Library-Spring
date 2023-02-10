@@ -5,6 +5,7 @@ import com.example.LibrarySpring.repository.OrderRepository;
 import com.example.LibrarySpring.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -20,18 +21,17 @@ public class OrderController {
 
     @PostMapping("/permit")
     @PreAuthorize("hasAuthority('developers:read')")
-    public OrderDTO createOrder(OrderDTO orderDTO) {
+    public OrderDTO createOrder(@RequestBody OrderDTO orderDTO) {
         log.info("create order {}", orderDTO);
-        orderService.createOrder(orderDTO);
-        return orderDTO;
+        return orderService.createOrder(orderDTO);
     }
 
     @PutMapping("/return")
     @PreAuthorize("hasAuthority('developers:read')")
-    public OrderDTO closeOrderAndReturnBook(OrderDTO orderDTO) {
+    @ResponseStatus(HttpStatus.OK)
+    public void closeOrderAndReturnBook(@RequestBody OrderDTO orderDTO) {
         log.info("close order {}", orderDTO);
         orderService.closeOrder(orderDTO);
-        return orderDTO;
     }
 
     @GetMapping("/all")

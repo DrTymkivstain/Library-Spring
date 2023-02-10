@@ -13,7 +13,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -72,6 +71,7 @@ class BookServiceImplTest {
         when(shelfRepository.findByBookIsNull()).thenReturn(Optional.of(shelf));
         when(tagService.mapTagArrayIntoTagSet(bookDTO.getTags())).thenReturn(book.getTags());
         when(authorService.mapAuthorArrayIntoAuthorSet(bookDTO.getAuthors())).thenReturn(book.getAuthors());
+        when(bookRepository.save(book)).thenReturn(book);
         bookService.addNewBook(bookDTO);
         verify(shelfRepository).save(shelf);
         verify(bookRepository).save(book);
@@ -82,6 +82,7 @@ class BookServiceImplTest {
         when(tagService.mapTagArrayIntoTagSet(bookDTO.getTags())).thenReturn(book.getTags());
         when(authorService.mapAuthorArrayIntoAuthorSet(bookDTO.getAuthors())).thenReturn(book.getAuthors());
         when(bookRepository.findById(bookDTO.getId())).thenReturn(Optional.of(book));
+        when(bookRepository.save(book)).thenReturn(book);
         bookService.updateBook(bookDTO);
         verify(bookRepository).findById(book.getId());
         verify(bookRepository).save(book);
@@ -89,7 +90,7 @@ class BookServiceImplTest {
 
     @Test
     void deleteBook() {
-        bookService.deleteBook(bookDTO);
+        bookService.deleteBookById(bookDTO.getId());
         verify(bookRepository, times(1))
                 .deleteById(bookDTO.getId());
     }
@@ -102,7 +103,7 @@ class BookServiceImplTest {
         Assert.assertTrue(bookService.getAvailableBooks(pageable).isEmpty());
         when(bookRepository.findAllByStatus(BookAvailabilityStatus.AVAILABLE, pageable))
                 .thenReturn(List.of(book));
-        assertEquals(List.of(bookDTO), bookService.getAvailableBooks( pageable));
+        assertEquals(List.of(bookDTO), bookService.getAvailableBooks(pageable));
         verify(bookRepository, times(2)).findAllByStatus(BookAvailabilityStatus.AVAILABLE, pageable);
     }
 

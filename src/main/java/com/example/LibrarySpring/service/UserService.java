@@ -10,11 +10,11 @@ public interface UserService {
 
     UserDTO updateUser(UserDTO userDTO);
 
-    UserDTO deleteUser(UserDTO userDTO);
+    void deleteUser(Long id);
 
-    UserDTO banUser(UserDTO userDTO);
+    UserDTO banUser(Long id);
 
-    UserDTO unBanUser(UserDTO userDTO);
+    UserDTO unBanUser(Long id);
 
     List<User> getAllUsers();
 

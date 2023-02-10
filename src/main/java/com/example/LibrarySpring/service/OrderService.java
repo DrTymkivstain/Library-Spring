@@ -5,7 +5,7 @@ import com.example.LibrarySpring.dto.OrderDTO;
 import java.util.List;
 
 public interface OrderService {
-    void createOrder(OrderDTO orderDTO);
+    OrderDTO createOrder(OrderDTO orderDTO);
 
     void closeOrder(OrderDTO orderDTO);
 

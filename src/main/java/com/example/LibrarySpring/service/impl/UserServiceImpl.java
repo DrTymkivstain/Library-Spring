@@ -29,41 +29,54 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO registerUser(UserDTO userDTO) {
         User user = new User(userDTO);
-        userRepository.save(user);
-        return userDTO;
+        return this.buildUserDTOFromUser(userRepository.save(user));
+    }
+
+    private UserDTO buildUserDTOFromUser(User user) {
+        return UserDTO.builder()
+                .phone(user.getPhone())
+                .email(user.getEmail())
+                .username(user.getUsername())
+                .password(user.getPassword())
+                .id(user.getUserId())
+                .build();
     }
 
     @Override
     public UserDTO updateUser(UserDTO userDTO) {
         log.info("update user with id {}", userDTO.getId());
-        userRepository.save(getUpdatedUser(userDTO));
-        return userDTO;
+        User user = userRepository
+                .findById(userDTO.getId())
+                .orElseThrow(() -> new ClassCastException("user not found"));
+        user.setEmail(userDTO.getEmail());
+        user.setPhone(userDTO.getPhone());
+        user.setPassword(userDTO.getPassword());
+        user.setUsername(userDTO.getUsername());
+        return this.buildUserDTOFromUser(userRepository.save(user));
     }
 
     @Override
-    public UserDTO deleteUser(UserDTO userDTO) {
-        log.info("delete user with id {}", userDTO.getId());
-        userRepository.deleteById(userDTO.getId());
-        return userDTO;
-
+    public void deleteUser(Long id) {
+        log.info("delete user with id {}", id);
+        userRepository.deleteById(id);
     }
 
     @Override
-    public UserDTO banUser(UserDTO userDTO) {
-        log.info("ban user with id {}", userDTO);
-        userRepository.findByUsername(userDTO.getUsername())
-                .orElseThrow(() -> new UsernameNotFoundException("not found user with username {}" + userDTO.getUsername()))
-                .setStatus(Status.BANNED);
-        return userDTO;
+    public UserDTO banUser(Long id) {
+        log.info("ban user with id {}", id);
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException("not found user with id {}" + id));
+        user.setStatus(Status.BANNED);
+        return this.buildUserDTOFromUser(userRepository.save(user));
     }
 
     @Override
-    public UserDTO unBanUser(UserDTO userDTO) {
-        log.info("unban user with id {}", userDTO);
-        userRepository.findByUsername(userDTO.getUsername())
-                .orElseThrow(() -> new UsernameNotFoundException("not found user with username {}" + userDTO.getUsername()))
-                .setStatus(Status.ACTIVE);
-        return userDTO;
+    public UserDTO unBanUser(Long id) {
+        log.info("unban user with id {}", id);
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException("not found user with id {}" + id));
+        user.setStatus(Status.ACTIVE);
+        return this.buildUserDTOFromUser(userRepository.save(user));
     }
 
     @Override
@@ -73,20 +86,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findUserById(Long id) {
-        return userRepository.findById(id).orElseThrow(() -> new ClassCastException("ser not found"));
+        return userRepository.findById(id).orElseThrow(() -> new CustomException("user not found"));
     }
 
-
-    private User getUpdatedUser(UserDTO userDTO) {
-        User user = userRepository
-                .findById(userDTO.getId())
-                .orElseThrow(() -> new ClassCastException("user not found"));
-        user.setEmail(userDTO.getEmail());
-        user.setPhone(userDTO.getPhone());
-        user.setPassword(userDTO.getPassword());
-        user.setUsername(userDTO.getUsername());
-        return user;
-    }
     private void saveNewUserAsAdmin(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         try {

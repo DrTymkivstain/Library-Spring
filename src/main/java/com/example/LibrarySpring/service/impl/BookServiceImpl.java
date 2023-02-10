@@ -16,7 +16,6 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,7 +43,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public void addNewBook(BookDTO bookDTO) {
+    public BookDTO addNewBook(BookDTO bookDTO) {
         Validator.checkNewBook(bookDTO);
         log.info("created book {}", bookDTO);
         Shelf shelf = shelfRepository.findByBookIsNull().orElse(new Shelf());
@@ -52,9 +51,8 @@ public class BookServiceImpl implements BookService {
         book.setShelf(shelf);
         book.setStatus(BookAvailabilityStatus.AVAILABLE);
         shelf.setBook(book);
-        bookRepository.save(book);
         shelfRepository.save(shelf);
-
+        return this.buildBookDTO(bookRepository.save(book));
     }
 
     private Book buildBookFromBookDTO(BookDTO bookDTO) {
@@ -68,24 +66,22 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public void updateBook(BookDTO bookDTO) {
+    public BookDTO updateBook(BookDTO bookDTO) {
         log.info("update book with id {}", bookDTO.getId());
-        bookRepository.save(getUpdatedBook(bookDTO));
-    }
-
-    private Book getUpdatedBook(BookDTO bookDTO) {
         Book book = bookRepository
                 .findById(bookDTO.getId())
                 .orElseThrow(() -> new CustomException("book not found"));
         book.setAuthors(authorService.mapAuthorArrayIntoAuthorSet(bookDTO.getAuthors()));
         book.setTags(tagService.mapTagArrayIntoTagSet(bookDTO.getTags()));
-        return book;
+        return this.buildBookDTO(bookRepository.save(book));
     }
 
+
+
     @Override
-    public void deleteBook(BookDTO bookDTO) {
-        log.info("delete book with id {}", bookDTO.getId());
-        bookRepository.deleteById(bookDTO.getId());
+    public void deleteBookById(Long id) {
+        log.info("delete book with id {}", id);
+        bookRepository.deleteById(id);
     }
 
     @Override

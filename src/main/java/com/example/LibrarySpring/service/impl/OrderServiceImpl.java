@@ -34,14 +34,14 @@ public class OrderServiceImpl implements OrderService {
         this.bookRepository = bookRepository;
     }
 
-    private static final int CHECKING_OF_ORDER_RETURNING_TIME = LocalDate.now().lengthOfMonth() * 86400000;
+    private static final long CHECKING_OF_ORDER_RETURNING_TIME = LocalDate.now().lengthOfMonth() * 86400000L;
 
     @Override
-    public void createOrder(OrderDTO orderDTO) {
+    public OrderDTO createOrder(OrderDTO orderDTO) {
         log.info("create order {}", orderDTO);
         Order order = buildAndActivateOrder(orderDTO);
-        orderRepository.save(order);
         orderExpirationCheckHandler(order);
+        return this.buildOrderDTO(orderRepository.save(order));
     }
 
     private Order buildAndActivateOrder(OrderDTO orderDTO) {

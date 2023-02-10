@@ -1,11 +1,12 @@
 package com.example.LibrarySpring.dto;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.ToString;
+import lombok.*;
 
 @Data
 @ToString
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserDTO {
     private Long id;
     private String username;
