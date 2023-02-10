@@ -13,7 +13,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -102,7 +101,7 @@ class BookServiceImplTest {
         Assert.assertTrue(bookService.getAvailableBooks(pageable).isEmpty());
         when(bookRepository.findAllByStatus(BookAvailabilityStatus.AVAILABLE, pageable))
                 .thenReturn(List.of(book));
-        assertEquals(List.of(bookDTO), bookService.getAvailableBooks( pageable));
+        assertEquals(List.of(bookDTO), bookService.getAvailableBooks(pageable));
         verify(bookRepository, times(2)).findAllByStatus(BookAvailabilityStatus.AVAILABLE, pageable);
     }
 

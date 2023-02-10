@@ -34,7 +34,7 @@ public class OrderServiceImpl implements OrderService {
         this.bookRepository = bookRepository;
     }
 
-    private static final int CHECKING_OF_ORDER_RETURNING_TIME = LocalDate.now().lengthOfMonth() * 86400000;
+    private static final long CHECKING_OF_ORDER_RETURNING_TIME = LocalDate.now().lengthOfMonth() * 86400000L;
 
     @Override
     public void createOrder(OrderDTO orderDTO) {
