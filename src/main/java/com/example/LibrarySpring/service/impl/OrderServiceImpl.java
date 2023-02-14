@@ -10,13 +10,12 @@ import com.example.LibrarySpring.repository.OrderRepository;
 import com.example.LibrarySpring.repository.UserRepository;
 import com.example.LibrarySpring.service.OrderService;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,13 +33,10 @@ public class OrderServiceImpl implements OrderService {
         this.bookRepository = bookRepository;
     }
 
-    private static final long CHECKING_OF_ORDER_RETURNING_TIME = LocalDate.now().lengthOfMonth() * 86400000L;
-
     @Override
     public OrderDTO createOrder(OrderDTO orderDTO) {
         log.info("create order {}", orderDTO);
         Order order = buildAndActivateOrder(orderDTO);
-        orderExpirationCheckHandler(order);
         return this.buildOrderDTO(orderRepository.save(order));
     }
 
@@ -59,24 +55,17 @@ public class OrderServiceImpl implements OrderService {
         return order;
     }
 
-    private void orderExpirationCheckHandler(Order order) {
-        new Timer().schedule(
-                new TimerTask() {
-                    @Override
-                    public void run() {
-                        checkOrderExpiration(order);
-                    }
-                }, CHECKING_OF_ORDER_RETURNING_TIME);
+    @Scheduled(cron = "0 0 0 * * * ")
+    public void AutoCloser() {
+        orderRepository.findAllByActiveIsTrue()
+                .forEach(this::checkOrderExpiration);
     }
-
     private void checkOrderExpiration(Order order) {
         LocalDate date = LocalDate.now();
         if (date.isEqual(order.getEndDate()) || date.isAfter(order.getEndDate())) {
             this.disActivateOrder(order);
             this.unLockBook(order.getBook());
         }
-
-
     }
 
     @Override
