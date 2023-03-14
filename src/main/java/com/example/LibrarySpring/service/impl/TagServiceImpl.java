@@ -21,6 +21,7 @@ public class TagServiceImpl implements TagService {
     @Override
     public Set<Tag> mapTagArrayIntoTagSet(Tag[] tags) {
         return Arrays.stream(tags)
+                .map(t -> tagRepository.findById(t.getId()).orElse(tagRepository.save(t)))
                 .collect(Collectors.toSet());
     }
 

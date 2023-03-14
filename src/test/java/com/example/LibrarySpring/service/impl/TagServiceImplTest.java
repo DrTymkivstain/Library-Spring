@@ -16,6 +16,7 @@ import static org.mockito.Mockito.*;
 
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @RunWith(SpringRunner.class)
@@ -30,10 +31,12 @@ class TagServiceImplTest {
     void mapTagArrayIntoTagSet() {
         Book firstBook = new Book();
         Book secondBook = new Book();
-        Set<Tag> tagsSet = Set.of(new Tag(1L, "first", Set.of(firstBook))
-                , new Tag(1L, "second", Set.of(secondBook)));
-        Tag[] tags = new Tag[]{new Tag(1L, "first", Set.of(firstBook))
-                , new Tag(1L, "second", Set.of(secondBook))};
+        Tag firstTag = new Tag(1L, "first", Set.of(firstBook));
+        Tag secondTag = new Tag(2L, "second", Set.of(secondBook));
+        Set<Tag> tagsSet = Set.of(firstTag, secondTag);
+        Tag[] tags = new Tag[]{firstTag, secondTag};
+        when(tagRepository.findById(firstTag.getId())).thenReturn(Optional.of(firstTag));
+        when(tagRepository.findById(secondTag.getId())).thenReturn(Optional.of(secondTag));
         Assert.assertEquals(tagsSet, tagService.mapTagArrayIntoTagSet(tags));
     }
 

@@ -21,6 +21,7 @@ public class AuthorServiceImpl implements AuthorService {
     @Override
     public Set<Author> mapAuthorArrayIntoAuthorSet(Author[] authors) {
         return Arrays.stream(authors)
+                .map(a -> authorRepository.findById(a.getId()).orElse(authorRepository.save(a)))
                 .collect(Collectors.toSet());
     }
 
