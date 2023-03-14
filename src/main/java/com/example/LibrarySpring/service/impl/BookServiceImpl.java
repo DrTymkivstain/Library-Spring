@@ -16,7 +16,6 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -49,6 +48,8 @@ public class BookServiceImpl implements BookService {
         log.info("created book {}", bookDTO);
         Shelf shelf = shelfRepository.findByBookIsNull().orElse(new Shelf());
         Book book = buildBookFromBookDTO(bookDTO);
+        book.getTags().stream().forEach(tag -> tag.getBooks().add(book));
+        book.getAuthors().stream().forEach(author -> author.getBooks().add(book));
         book.setShelf(shelf);
         book.setStatus(BookAvailabilityStatus.AVAILABLE);
         shelf.setBook(book);

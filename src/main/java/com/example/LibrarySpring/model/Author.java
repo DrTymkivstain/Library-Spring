@@ -1,14 +1,13 @@
 package com.example.LibrarySpring.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
+@EqualsAndHashCode(of = {"id", "authorName"})
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,5 +23,5 @@ public class Author {
     @JoinTable(name = "author_book",
             joinColumns = @JoinColumn(name = "author_id"),
             inverseJoinColumns = @JoinColumn(name = "book_id"))
-    private Set<Book> books;
+    private Set<Book> books = new HashSet<>();
 }

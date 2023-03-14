@@ -3,11 +3,14 @@ package com.example.LibrarySpring.model;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
+@EqualsAndHashCode(exclude = "books")
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "tag")
