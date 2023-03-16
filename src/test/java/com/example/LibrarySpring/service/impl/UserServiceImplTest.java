@@ -42,18 +42,18 @@ class UserServiceImplTest {
         User user = new User();
         user.setUserId(89L);
         UserDTO userDTO = new UserDTO();
-        userDTO.setId(89L);
+        userDTO.setUserId(89L);
         User newUser = new User();
         when(userRepository.findById(user.getUserId())).thenReturn(Optional.of(user));
         when(userRepository.save(user)).thenReturn(user);
         userService.updateUser(userDTO);
-        verify(userRepository).findById(userDTO.getId());
+        verify(userRepository).findById(userDTO.getUserId());
     }
 
     @Test()
     void updateUserIfUserNotExist() {
         UserDTO userDTO = new UserDTO();
-        userDTO.setId(8L);
+        userDTO.setUserId(8L);
         when(userRepository.findById(anyLong())).thenThrow(CustomException.class);
         CustomException thrown = assertThrows(CustomException.class, () -> userService.updateUser(userDTO));
         assertEquals(thrown.getClass(), CustomException.class);
@@ -63,17 +63,17 @@ class UserServiceImplTest {
     void deleteUser() {
         User user = new User();
         UserDTO userDTO = new UserDTO();
-        userDTO.setId(1L);
+        userDTO.setUserId(1L);
         user.setUserId(1L);
         when(userRepository.findById(user.getUserId())).thenReturn(Optional.of(user));
-        userService.deleteUser(userDTO.getId());
-        verify(userRepository).deleteById(userDTO.getId());
+        userService.deleteUser(userDTO.getUserId());
+        verify(userRepository).deleteById(userDTO.getUserId());
     }
 
     @Test
     void deleteUserIfNotExist() {
         UserDTO userDTO = new UserDTO();
-        userDTO.setId(8L);
+        userDTO.setUserId(8L);
         when(userRepository.findById(anyLong())).thenThrow(CustomException.class);
         CustomException thrown = assertThrows(CustomException.class, () -> userService.updateUser(userDTO));
         assertEquals(thrown.getClass(), CustomException.class);
@@ -83,14 +83,14 @@ class UserServiceImplTest {
     void banUser() {
         UserDTO userDTO = new UserDTO();
         userDTO.setUsername("user");
-        userDTO.setId(1L);
+        userDTO.setUserId(1L);
         User user = new User();
         user.setUsername("user");
         user.setStatus(Status.ACTIVE);
         user.setUserId(1L);
-        when(userRepository.findById(userDTO.getId())).thenReturn(Optional.of(user));
+        when(userRepository.findById(userDTO.getUserId())).thenReturn(Optional.of(user));
         when(userRepository.save(user)).thenReturn(user);
-        userService.banUser(userDTO.getId());
+        userService.banUser(userDTO.getUserId());
         assertEquals(userRepository.findById(user.getUserId()).get().getStatus(), Status.BANNED);
         verify(userRepository, times(2)).findById(user.getUserId());
     }
@@ -99,14 +99,14 @@ class UserServiceImplTest {
     void unBanUser() {
         UserDTO userDTO = new UserDTO();
         userDTO.setUsername("user");
-        userDTO.setId(1L);
+        userDTO.setUserId(1L);
         User user = new User();
         user.setUsername("user");
         user.setStatus(Status.BANNED);
         user.setUserId(1L);
-        when(userRepository.findById(userDTO.getId())).thenReturn(Optional.of(user));
+        when(userRepository.findById(userDTO.getUserId())).thenReturn(Optional.of(user));
         when(userRepository.save(user)).thenReturn(user);
-        userService.unBanUser(userDTO.getId());
+        userService.unBanUser(userDTO.getUserId());
         assertEquals(userRepository.findById(user.getUserId()).get().getStatus(), Status.ACTIVE);
         verify(userRepository, times(2)).findById(user.getUserId());
     }

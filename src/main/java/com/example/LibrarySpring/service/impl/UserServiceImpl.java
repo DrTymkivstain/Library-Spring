@@ -2,6 +2,7 @@ package com.example.LibrarySpring.service.impl;
 
 import com.example.LibrarySpring.dto.UserDTO;
 import com.example.LibrarySpring.exception.CustomException;
+import com.example.LibrarySpring.mapper.UserMapper;
 import com.example.LibrarySpring.model.Role;
 import com.example.LibrarySpring.model.Status;
 import com.example.LibrarySpring.model.User;
@@ -21,6 +22,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     private final PasswordEncoder passwordEncoder;
+
     public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
@@ -29,30 +31,21 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO registerUser(UserDTO userDTO) {
         User user = new User(userDTO);
-        return this.buildUserDTOFromUser(userRepository.save(user));
+        return UserMapper.MAPPER.toUserDTO(userRepository.save(user));
     }
 
-    private UserDTO buildUserDTOFromUser(User user) {
-        return UserDTO.builder()
-                .phone(user.getPhone())
-                .email(user.getEmail())
-                .username(user.getUsername())
-                .password(user.getPassword())
-                .id(user.getUserId())
-                .build();
-    }
 
     @Override
     public UserDTO updateUser(UserDTO userDTO) {
-        log.info("update user with id {}", userDTO.getId());
+        log.info("update user with id {}", userDTO.getUserId());
         User user = userRepository
-                .findById(userDTO.getId())
+                .findById(userDTO.getUserId())
                 .orElseThrow(() -> new ClassCastException("user not found"));
         user.setEmail(userDTO.getEmail());
         user.setPhone(userDTO.getPhone());
         user.setPassword(userDTO.getPassword());
         user.setUsername(userDTO.getUsername());
-        return this.buildUserDTOFromUser(userRepository.save(user));
+        return UserMapper.MAPPER.toUserDTO(userRepository.save(user));
     }
 
     @Override
@@ -67,7 +60,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UsernameNotFoundException("not found user with id {}" + id));
         user.setStatus(Status.BANNED);
-        return this.buildUserDTOFromUser(userRepository.save(user));
+        return UserMapper.MAPPER.toUserDTO(userRepository.save(user));
     }
 
     @Override
@@ -76,7 +69,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UsernameNotFoundException("not found user with id {}" + id));
         user.setStatus(Status.ACTIVE);
-        return this.buildUserDTOFromUser(userRepository.save(user));
+        return UserMapper.MAPPER.toUserDTO(userRepository.save(user));
     }
 
     @Override

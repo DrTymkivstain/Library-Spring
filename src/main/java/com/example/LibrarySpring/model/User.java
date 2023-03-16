@@ -4,10 +4,8 @@ import com.example.LibrarySpring.dto.UserDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "users")
 public class User {
@@ -27,6 +25,10 @@ public class User {
 
     private String email;
     private String phone;
+
+    public User() {
+    }
+
 
     public User(String username, String password, Status status, Role role, String email, String phone) {
         this.username = username;

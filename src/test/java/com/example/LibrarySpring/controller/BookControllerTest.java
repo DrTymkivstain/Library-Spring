@@ -1,7 +1,6 @@
 package com.example.LibrarySpring.controller;
 
-import com.example.LibrarySpring.LibrarySpringApplicationTests;
-import com.example.LibrarySpring.config.AppTestConfig;
+import com.example.LibrarySpring.LibrarySpringApplication;
 import jakarta.servlet.ServletContext;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,7 +18,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = { AppTestConfig.class})
+@ContextConfiguration(classes = { LibrarySpringApplication.class})
 @WebAppConfiguration
 @RunWith(MockitoJUnitRunner.class)
 class BookControllerTest {
