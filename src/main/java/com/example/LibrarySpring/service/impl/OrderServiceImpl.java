@@ -42,14 +42,13 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private Order buildAndActivateOrder(OrderDTO orderDTO) {
-        Order order = orderRepository.findById(orderDTO.getId()).orElse(new Order());
+        Order order = OrderMapper.MAPPER.toOrder(orderDTO);
         order.setBook(bookRepository.findByName(orderDTO.getBookName()).orElseThrow(
                 () -> new CustomException("book not found")));
         if (order.getBook().getStatus().equals(BookAvailabilityStatus.NOT_AVAILABLE)) {
             throw new CustomException("book is not available");
         }
         order.setActive(true);
-        order.setStartDate(LocalDate.now());
         order.setUser(userRepository.findByUsername(orderDTO.getUserName()).orElseThrow(
                 () -> new UsernameNotFoundException("user not found")));
         order.getBook().setStatus(BookAvailabilityStatus.NOT_AVAILABLE);
@@ -84,7 +83,7 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository
                 .findAll()
                 .stream()
-                .map(this::buildOrderDTO)
+                .map(OrderMapper.MAPPER::toOrderDTO)
                 .collect(Collectors.toList());
     }
 
@@ -93,7 +92,7 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository
                 .findAllByActiveIsTrue()
                 .stream()
-                .map(this::buildOrderDTO)
+                .map(OrderMapper.MAPPER::toOrderDTO)
                 .collect(Collectors.toList());
     }
 
@@ -102,7 +101,7 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository
                 .findAllByActiveIsFalse()
                 .stream()
-                .map(this::buildOrderDTO)
+                .map(OrderMapper.MAPPER::toOrderDTO)
                 .collect(Collectors.toList());
     }
 
@@ -111,7 +110,7 @@ public class OrderServiceImpl implements OrderService {
         log.info("active orders by username {}", userName);
         return orderRepository.findAllByActiveIsTrueAndUser_Username(userName)
                 .stream()
-                .map(this::buildOrderDTO)
+                .map(OrderMapper.MAPPER::toOrderDTO)
                 .collect(Collectors.toList());
     }
 
@@ -120,7 +119,7 @@ public class OrderServiceImpl implements OrderService {
         log.info("active orders by username {}", userName);
         return orderRepository.findAllByActiveIsFalseAndUser_Username(userName)
                 .stream()
-                .map(this::buildOrderDTO)
+                .map(OrderMapper.MAPPER::toOrderDTO)
                 .collect(Collectors.toList());
     }
 
@@ -128,18 +127,8 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderDTO> getAllOrdersByUser(String userName) {
         return orderRepository.findAllByUser_Username(userName)
                 .stream()
-                .map(this::buildOrderDTO)
+                .map(OrderMapper.MAPPER::toOrderDTO)
                 .collect(Collectors.toList());
-    }
-
-    private OrderDTO buildOrderDTO(Order order) {
-        return OrderDTO.builder()
-                .id(order.getId())
-                .endDate(order.getEndDate().toString())
-                .startDate(order.getStartDate().toString())
-                .bookName(order.getBook().getName())
-                .userName(order.getUser().getUsername())
-                .build();
     }
 
     private void disActivateOrder(Order order) {
