@@ -2,6 +2,7 @@ package com.example.LibrarySpring.service.impl;
 
 import com.example.LibrarySpring.dto.OrderDTO;
 import com.example.LibrarySpring.exception.CustomException;
+import com.example.LibrarySpring.mapper.OrderMapper;
 import com.example.LibrarySpring.model.Book;
 import com.example.LibrarySpring.model.BookAvailabilityStatus;
 import com.example.LibrarySpring.model.Order;
@@ -37,7 +38,7 @@ public class OrderServiceImpl implements OrderService {
     public OrderDTO createOrder(OrderDTO orderDTO) {
         log.info("create order {}", orderDTO);
         Order order = buildAndActivateOrder(orderDTO);
-        return this.buildOrderDTO(orderRepository.save(order));
+        return OrderMapper.MAPPER.toOrderDTO(orderRepository.save(order));
     }
 
     private Order buildAndActivateOrder(OrderDTO orderDTO) {

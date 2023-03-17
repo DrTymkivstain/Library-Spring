@@ -5,7 +5,6 @@ import com.example.LibrarySpring.dto.FilterDTO;
 import com.example.LibrarySpring.model.*;
 import com.example.LibrarySpring.repository.BookRepository;
 import com.example.LibrarySpring.repository.ShelfRepository;
-import com.example.LibrarySpring.repository.TagRepository;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,7 +13,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -45,8 +43,6 @@ class BookServiceImplTest {
     private Shelf shelf;
     private Author author;
     private Tag tag;
-    @Autowired
-    private TagRepository tagRepository;
 
     @BeforeEach
     public void configTestData() {
