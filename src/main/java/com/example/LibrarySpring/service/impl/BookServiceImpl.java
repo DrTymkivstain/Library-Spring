@@ -3,6 +3,7 @@ package com.example.LibrarySpring.service.impl;
 import com.example.LibrarySpring.dto.BookDTO;
 import com.example.LibrarySpring.dto.FilterDTO;
 import com.example.LibrarySpring.exception.CustomException;
+import com.example.LibrarySpring.mapper.BookMapper;
 import com.example.LibrarySpring.model.*;
 import com.example.LibrarySpring.repository.BookRepository;
 import com.example.LibrarySpring.repository.ShelfRepository;
@@ -47,24 +48,16 @@ public class BookServiceImpl implements BookService {
         Validator.checkNewBook(bookDTO);
         log.info("created book {}", bookDTO);
         Shelf shelf = shelfRepository.findByBookIsNull().orElse(new Shelf());
-        Book book = buildBookFromBookDTO(bookDTO);
+        Book book = BookMapper.BOOK_MAPPER.toBook(bookDTO);
+        book.setTags(tagService.mapTagArrayIntoTagSet(bookDTO.getTags()));
+        book.setAuthors(authorService.mapAuthorArrayIntoAuthorSet(bookDTO.getAuthors()));
         book.getTags().stream().forEach(tag -> tag.getBooks().add(book));
         book.getAuthors().stream().forEach(author -> author.getBooks().add(book));
         book.setShelf(shelf);
         book.setStatus(BookAvailabilityStatus.AVAILABLE);
         shelf.setBook(book);
         shelfRepository.save(shelf);
-        return this.buildBookDTO(bookRepository.save(book));
-    }
-
-    private Book buildBookFromBookDTO(BookDTO bookDTO) {
-
-        return Book.builder()
-                .id(bookDTO.getId())
-                .name(bookDTO.getName())
-                .tags(tagService.mapTagArrayIntoTagSet(bookDTO.getTags()))
-                .authors(authorService.mapAuthorArrayIntoAuthorSet(bookDTO.getAuthors()))
-                .build();
+        return BookMapper.BOOK_MAPPER.toBookDTO(bookRepository.save(book));
     }
 
     @Override
@@ -75,7 +68,7 @@ public class BookServiceImpl implements BookService {
                 .orElseThrow(() -> new CustomException("book not found"));
         book.setAuthors(authorService.mapAuthorArrayIntoAuthorSet(bookDTO.getAuthors()));
         book.setTags(tagService.mapTagArrayIntoTagSet(bookDTO.getTags()));
-        return this.buildBookDTO(bookRepository.save(book));
+        return BookMapper.BOOK_MAPPER.toBookDTO(bookRepository.save(book));
     }
 
 
@@ -90,33 +83,15 @@ public class BookServiceImpl implements BookService {
     public List<BookDTO> getAvailableBooks(Pageable pageable) {
         return bookRepository.findAllByStatus(BookAvailabilityStatus.AVAILABLE, pageable)
                 .stream()
-                .map(this::buildBookDTO)
+                .map(BookMapper.BOOK_MAPPER::toBookDTO)
                 .collect(Collectors.toList());
-    }
-
-    private BookDTO buildBookDTO(Book book) {
-        return BookDTO.builder()
-                .id(book.getId())
-                .authors(getArrayOfAuthors(book))
-                .tags(getArrayOfTags(book))
-                .name(book.getName())
-                .build();
-    }
-
-
-    private Tag[] getArrayOfTags(Book book) {
-        return  book.getTags().toArray(new Tag[book.getTags().size()]);
-    }
-
-    private Author[] getArrayOfAuthors(Book book) {
-        return book.getAuthors().toArray(new Author[book.getAuthors().size()]);
     }
 
     @Override
     public List<BookDTO> getAvailableBookDTOsByFilter(FilterDTO filterDTO, Pageable pageable) {
         return getAvailableBooksByFilter(filterDTO, pageable)
                 .stream()
-                .map(this::buildBookDTO)
+                .map(BookMapper.BOOK_MAPPER::toBookDTO)
                 .collect(Collectors.toList());
 
     }
