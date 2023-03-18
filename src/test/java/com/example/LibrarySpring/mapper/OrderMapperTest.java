@@ -18,8 +18,8 @@ class OrderMapperTest {
         orderDTO.setId(1L);
         orderDTO.setBookName("book");
         orderDTO.setUserName("user");
-        orderDTO.setStartDate("2023-03-17");
-        orderDTO.setEndDate("2023-04-17");
+        orderDTO.setStartDate(String.valueOf(LocalDate.now()));
+        orderDTO.setEndDate(String.valueOf(LocalDate.now().plusMonths(1)));
 
         Order order = OrderMapper.MAPPER.toOrder(orderDTO);
 

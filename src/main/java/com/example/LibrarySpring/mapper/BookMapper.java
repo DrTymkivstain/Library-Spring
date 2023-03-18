@@ -2,16 +2,21 @@ package com.example.LibrarySpring.mapper;
 
 import com.example.LibrarySpring.dto.BookDTO;
 import com.example.LibrarySpring.model.Book;
-import com.example.LibrarySpring.service.TagService;
-import com.example.LibrarySpring.service.impl.TagServiceImpl;
-import org.mapstruct.AfterMapping;
-import org.mapstruct.BeforeMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mapstruct.*;
+import org.mapstruct.factory.Mappers;
 
-@Mapper(componentModel = "spring")
+
+@Mapper
 public interface BookMapper {
 
+    BookMapper BOOK_MAPPER = Mappers.getMapper(BookMapper.class);
+    @Mapping(target = "shelf", ignore = true)
+    @Mapping(target = "status", ignore = true)
+    @Mapping(target = "authors", ignore = true)
+    @Mapping(target = "tags", ignore = true)
+    Book toBook(BookDTO bookDTO);
 
+
+    @InheritInverseConfiguration
+    BookDTO toBookDTO(Book book);
 }
